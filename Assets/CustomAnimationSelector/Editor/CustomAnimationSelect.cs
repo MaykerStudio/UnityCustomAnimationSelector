@@ -1,6 +1,4 @@
 #if UNITY_2019_1_OR_NEWER
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEditor.IMGUI.Controls;
@@ -8,6 +6,8 @@ using UnityEngine;
 
 public class CustomAnimationSelect : EditorWindow
 {
+    public const float DROPDOWNHEIGHT = 300f;
+
     public static CustomAnimationSelect Instance
     {
         get
@@ -48,7 +48,7 @@ public class CustomAnimationSelect : EditorWindow
                 AnimatorController controller = null;
 
                 if (animator)
-                    controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(AssetDatabase.GetAssetPath(animator.runtimeAnimatorController));
+                    controller = (AnimatorController)animator.runtimeAnimatorController;
                 else
                     Debug.LogError($"{selected.name} doesn't contains an animator controller");
 
@@ -71,8 +71,6 @@ public class CustomAnimationSelect : EditorWindow
 
                     menu.DropDown(rect);
 
-                    float maxHeight = 300f;
-
                     var window = focusedWindow;
 
                     if (window == null)
@@ -88,12 +86,12 @@ public class CustomAnimationSelect : EditorWindow
                     }
 
                     var position = window.position;
-                    if (position.height <= maxHeight)
+                    if (position.height <= DROPDOWNHEIGHT)
                     {
                         return;
                     }
 
-                    position.height = maxHeight;
+                    position.height = DROPDOWNHEIGHT;
                     window.minSize = position.size;
                     window.maxSize = position.size;
                     window.position = position;
