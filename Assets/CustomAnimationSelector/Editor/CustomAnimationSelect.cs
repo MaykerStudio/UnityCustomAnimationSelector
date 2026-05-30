@@ -3,6 +3,11 @@ using UnityEditor;
 using UnityEditor.Animations;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+#if UNITY_2021_1_OR_NEWER
+using PrefabStageUtility = UnityEditor.SceneManagement.PrefabStageUtility;
+#else
+using UnityEditor.Experimental.SceneManagement;
+#endif
 
 public class CustomAnimationSelect : EditorWindow
 {
@@ -11,13 +16,13 @@ public class CustomAnimationSelect : EditorWindow
     private const float MinWindowWidth = 220f;
     private const float HeaderHeight = 22f;
 
-    private static readonly Color AccentBlue = new(0.3f, 0.6f, 1f);
-    private static readonly Color AccentYellow = new(1f, 0.85f, 0.2f);
-    private static readonly Color RowEven = new(0.22f, 0.22f, 0.22f);
-    private static readonly Color RowOdd = new(0.19f, 0.19f, 0.19f);
-    private static readonly Color RowHover = new(0.28f, 0.42f, 0.62f);
-    private static readonly Color RowSelected = new(0.24f, 0.48f, 0.9f);
-    private static readonly Color DividerColor = new(0.12f, 0.12f, 0.12f);
+    private static readonly Color AccentBlue = new Color(0.3f, 0.6f, 1f);
+    private static readonly Color AccentYellow = new Color(1f, 0.85f, 0.2f);
+    private static readonly Color RowEven = new Color(0.22f, 0.22f, 0.22f);
+    private static readonly Color RowOdd = new Color(0.19f, 0.19f, 0.19f);
+    private static readonly Color RowHover = new Color(0.28f, 0.42f, 0.62f);
+    private static readonly Color RowSelected = new Color(0.24f, 0.48f, 0.9f);
+    private static readonly Color DividerColor = new Color(0.12f, 0.12f, 0.12f);
 
     #endregion
 
@@ -34,7 +39,8 @@ public class CustomAnimationSelect : EditorWindow
     }
 
     private static CustomAnimationSelect _instance;
-    private static readonly List<AnimatorController> sortedControllers = new();
+    private static readonly List<AnimatorController> sortedControllers =
+        new List<AnimatorController>();
 
     #endregion
 
@@ -159,13 +165,13 @@ public class CustomAnimationSelect : EditorWindow
 
         string badge = clipCount.ToString();
         float badgeWidth = countBadgeStyle.CalcSize(new GUIContent(badge)).x + 10f;
-        Rect badgeRect = new(
+        Rect badgeRect = new Rect(
             rowRect.xMax - badgeWidth - 6f,
             rowRect.y + 3f,
             badgeWidth,
             rowRect.height - 6f
         );
-        Rect labelRect = new(
+        Rect labelRect = new Rect(
             rowRect.x + 8f,
             rowRect.y,
             rowRect.width - badgeWidth - 20f,
@@ -220,7 +226,12 @@ public class CustomAnimationSelect : EditorWindow
         string prefabPath = FindPrefabPathWithController(controller);
         if (!string.IsNullOrEmpty(prefabPath))
         {
+#if UNITY_2021_1_OR_NEWER
             PrefabStageUtility.OpenPrefab(prefabPath);
+#else
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            AssetDatabase.OpenAsset(prefab);
+#endif
             var stage = PrefabStageUtility.GetCurrentPrefabStage();
             if (stage != null)
             {
@@ -294,7 +305,7 @@ public class CustomAnimationSelect : EditorWindow
         if (isHovered)
             Repaint();
 
-        Rect labelRect = new(rowRect.x + 8f, rowRect.y, rowRect.width - 8f, rowRect.height);
+        Rect labelRect = new Rect(rowRect.x + 8f, rowRect.y, rowRect.width - 8f, rowRect.height);
         GUI.Label(labelRect, clip.name, rowStyle);
 
         if (GUI.Button(rowRect, GUIContent.none, GUIStyle.none))
@@ -360,7 +371,12 @@ public class CustomAnimationSelect : EditorWindow
         string prefabPath = FindPrefabPathWithController(controller);
         if (!string.IsNullOrEmpty(prefabPath))
         {
+#if UNITY_2021_1_OR_NEWER
             PrefabStageUtility.OpenPrefab(prefabPath);
+#else
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            AssetDatabase.OpenAsset(prefab);
+#endif
             stage = PrefabStageUtility.GetCurrentPrefabStage();
             if (stage != null)
             {
