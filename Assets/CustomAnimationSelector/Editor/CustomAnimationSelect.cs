@@ -263,6 +263,9 @@ public class CustomAnimationSelect : EditorWindow
         DrawSearchBar();
         DrawDivider();
 
+        if (!selectedController)
+            return;
+
         if (selectedController.animationClips.Length == 0)
         {
             DrawEmptyState("No animation clips in this controller.");
